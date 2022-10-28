@@ -71,7 +71,7 @@ class MyAdminIndexView(AdminIndexView):
 admin = Admin(app, index_view=MyAdminIndexView())
 admin.add_view(MyModelView(Item, db.session))
 
-
+###
 class RegistrationForm(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(
         min=4, max=20)], render_kw={"placeholder": "Username"})
