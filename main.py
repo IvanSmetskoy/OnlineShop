@@ -14,7 +14,10 @@ from flask_bcrypt import Bcrypt
 
 from cloudipsp import Api, Checkout
 
-
+#############################################
+from flask_jwt_extended import JWTManager #############################################
+from flask_jwt_extended import create_access_token
+from datetime import timedelta
 
 app = Flask(__name__)
 
@@ -30,6 +33,9 @@ bootstrap = Bootstrap(app)
 login_manager = LoginManager(app)
 login_manager.init_app(app)
 login_manager.login_view = "login"
+
+
+jwt = JWTManager(app)
 
 
 @login_manager.user_loader
@@ -52,6 +58,11 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
+
+    def get_token(self, expire_time=24):
+        expire_delta = timedelta(expire_time)
+        token = create_access_token(identity=self.id, expires_delta=expire_delta)
+        return token
 
 
 # admin enabling
@@ -149,6 +160,7 @@ def edit(id):
 
 
 @app.route('/about')
+@login_required
 def about():
     return render_template('about.html')
 
